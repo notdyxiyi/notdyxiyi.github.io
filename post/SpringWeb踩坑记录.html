@@ -1,1 +1,774 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><script type="module" crossorigin src="/static/js/38b034bd.js"></script><link rel="stylesheet" href="/static/css/581e01a0.css"><!-- hexo injector head_end start --><script rel="prefetch" async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script rel="preload" src="https://unpkg.com/blueimp-md5@^2.19.0/js/md5.min.js"></script><script rel="preload" src="https://unpkg.com/lodash@^4.17.21/lodash.min.js"></script><link rel="stylesheet" href="https://fonts.loli.net/css?family=Rubik" /><script rel="preload" src="https://unpkg.com/gitalk@^1.8.0/dist/gitalk.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk@^1.8.0/dist/gitalk.css"/><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body id="body-container"><noscript><strong>We're sorry but this app doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="矽疑">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="解决Maven依赖下载奇慢的问题,服务器在国外，很慢的在IDEA中按两次shift键，输入settings.xml,选择Create粘贴以下内容到文件中 &lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt; &lt;settings xmlns&#x3D;&quot;http:&#x2F;&#x2F;m">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringWeb踩坑记录">
+<meta property="og:url" content="http://example.com/post/SpringWeb%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95.html">
+<meta property="og:site_name" content="矽疑">
+<meta property="og:description" content="解决Maven依赖下载奇慢的问题,服务器在国外，很慢的在IDEA中按两次shift键，输入settings.xml,选择Create粘贴以下内容到文件中 &lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt; &lt;settings xmlns&#x3D;&quot;http:&#x2F;&#x2F;m">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/0113cb3af99a4839b131337b1f9afa71.png">
+<meta property="og:image" content="http://example.com/images/5d847efec6634fa0ac649a22e25ae47c.png">
+<meta property="og:image" content="http://example.com/images/eaf65c98ae504be58c4155a689f22ce6.png">
+<meta property="og:image" content="http://example.com/images/71a6aba9570045b6a802b3e361c43260.png">
+<meta property="og:image" content="http://example.com/images/ebb7f482ba7d48de9272af751ecb5038.png">
+<meta property="og:image" content="http://example.com/images/4edbaa41b97c4140a2b68831000b1a1f.png">
+<meta property="og:image" content="http://example.com/images/02045ccacf9c4c08a4937fa360186d4f.png">
+<meta property="og:image" content="http://example.com/images/792a88ffe4ae48688e6abfd8ebc8f861.png">
+<meta property="og:image" content="http://example.com/images/481eaf6ad0194cd0a3a817030c8b620d.png">
+<meta property="og:image" content="http://example.com/images/c2efdfa7a54a4db98016f89b2167de2b.png">
+<meta property="og:image" content="http://example.com/images/f2f1a7127c3c48b4bf728dfe017e2345.png">
+<meta property="article:published_time" content="2023-11-10T12:38:27.000Z">
+<meta property="article:modified_time" content="2024-09-23T15:00:26.212Z">
+<meta property="article:author" content="矽疑">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Spring">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/images/0113cb3af99a4839b131337b1f9afa71.png">
+  
+  
+  
+  <title>SpringWeb踩坑记录 - 矽疑</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="SpringWeb踩坑记录"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-10 20:38" pubdate>
+          2023年11月10日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          31 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">SpringWeb踩坑记录</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="解决Maven依赖下载奇慢的问题-服务器在国外，很慢的"><a href="#解决Maven依赖下载奇慢的问题-服务器在国外，很慢的" class="headerlink" title="解决Maven依赖下载奇慢的问题,服务器在国外，很慢的"></a>解决Maven依赖下载奇慢的问题,服务器在国外，很慢的</h1><p>在IDEA中按两次shift键，输入settings.xml,选择Create<br><img src="/../images/0113cb3af99a4839b131337b1f9afa71.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>粘贴以下内容到文件中</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-none"><code class="language-none">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;
+&lt;settings xmlns&#x3D;&quot;http:&#x2F;&#x2F;maven.apache.org&#x2F;SETTINGS&#x2F;1.0.0&quot;
+          xmlns:xsi&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2001&#x2F;XMLSchema-instance&quot;
+          xsi:schemaLocation&#x3D;&quot;http:&#x2F;&#x2F;maven.apache.org&#x2F;SETTINGS&#x2F;1.0.0
+                          https:&#x2F;&#x2F;maven.apache.org&#x2F;xsd&#x2F;settings-1.0.0.xsd&quot;&gt;
+ 
+    &lt;mirrors&gt;
+    
+        &lt;mirror&gt;
+            &lt;id&gt;alimaven&lt;&#x2F;id&gt;
+            &lt;name&gt;aliyun maven&lt;&#x2F;name&gt;
+            &lt;!-- https:&#x2F;&#x2F;maven.aliyun.com&#x2F;repository&#x2F;public&#x2F; --&gt;
+            &lt;url&gt;http:&#x2F;&#x2F;maven.aliyun.com&#x2F;nexus&#x2F;content&#x2F;groups&#x2F;public&#x2F;&lt;&#x2F;url&gt;
+            &lt;mirrorOf&gt;central&lt;&#x2F;mirrorOf&gt;
+        &lt;&#x2F;mirror&gt;
+    &lt;&#x2F;mirrors&gt;
+&lt;&#x2F;settings&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p>重启IDEA，或者再次创建一个项目，下载速度很快。</p>
+<h1 id="java-无效的目标发行版"><a href="#java-无效的目标发行版" class="headerlink" title="java:无效的目标发行版"></a>java:无效的目标发行版</h1><p>原因都知道哈，版本不对<br>IDEA-&gt;Settings-&gt;Build,Execution,Deployment-&gt;Compiler-&gt;Java Compiler<br><img src="/../images/5d847efec6634fa0ac649a22e25ae47c.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>还有两个地方<br>File-&gt;Project Structure-&gt;Project<br><img src="/../images/eaf65c98ae504be58c4155a689f22ce6.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>File-&gt;Project Structure-&gt;Modules<br><img src="/../images/71a6aba9570045b6a802b3e361c43260.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>如果还不行，将pom.xml的的java.version改成你上述图片中选择的版本即可</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-markup" data-language="markup"><code class="language-markup"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>properties</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>java.version</span><span class="token punctuation">></span></span>19<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>java.version</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>properties</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></div></figure>
+
+<h1 id="List转换成Page时抛出ClassCastException"><a href="#List转换成Page时抛出ClassCastException" class="headerlink" title="List转换成Page时抛出ClassCastException"></a>List转换成Page时抛出ClassCastException</h1><p>报错信息:</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-none"><code class="language-none">class java.util.ArrayList cannot be cast to class com.github.pagehelper.Page (java.util.ArrayList is in module java.base of loader &#39;bootstrap&#39;; com.github.pagehelper.Page is in unnamed module of loader &#39;app&#39;)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></div></figure>
+<p>原先代码</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-java" data-language="java"><code class="language-java">
+<span class="token class-name">PageHelper</span><span class="token punctuation">.</span><span class="token function">startPage</span><span class="token punctuation">(</span>page<span class="token punctuation">,</span>pageSize<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Emp</span><span class="token punctuation">></span></span> empList <span class="token operator">=</span> empMapper<span class="token punctuation">.</span><span class="token function">list</span><span class="token punctuation">(</span>name<span class="token punctuation">,</span> gender<span class="token punctuation">,</span> begin<span class="token punctuation">,</span> end<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token class-name">Page</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Emp</span><span class="token punctuation">></span></span> emp <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Page</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Emp</span><span class="token punctuation">></span></span><span class="token punctuation">)</span>empList<span class="token punctuation">;</span><span class="token comment">//这里出现了异常</span>
+<span class="token class-name">PageBean</span> pageBean <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">PageBean</span><span class="token punctuation">(</span>emp<span class="token punctuation">.</span><span class="token function">getTotal</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> emp<span class="token punctuation">.</span><span class="token function">getResult</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p>解决办法，将代码修改成下面的，原因不知道</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-java" data-language="java"><code class="language-java">
+<span class="token class-name">Page</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Emp</span><span class="token punctuation">></span></span> emp <span class="token operator">=</span> <span class="token class-name">PageHelper</span><span class="token punctuation">.</span><span class="token function">startPage</span><span class="token punctuation">(</span>page<span class="token punctuation">,</span>pageSize<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Emp</span><span class="token punctuation">></span></span> empList <span class="token operator">=</span> empMapper<span class="token punctuation">.</span><span class="token function">list</span><span class="token punctuation">(</span>name<span class="token punctuation">,</span> gender<span class="token punctuation">,</span> begin<span class="token punctuation">,</span> end<span class="token punctuation">)</span><span class="token punctuation">;</span>
+emp<span class="token punctuation">.</span><span class="token function">addAll</span><span class="token punctuation">(</span>empList<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token class-name">PageBean</span> pageBean <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">PageBean</span><span class="token punctuation">(</span>emp<span class="token punctuation">.</span><span class="token function">getTotal</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> emp<span class="token punctuation">.</span><span class="token function">getResult</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p>还有一个解决办法，把PageHelper的版本换成最新版，在pom.xml文件中改</p>
+<h1 id="将静态页面加入到static文件夹从浏览器访问不到"><a href="#将静态页面加入到static文件夹从浏览器访问不到" class="headerlink" title="将静态页面加入到static文件夹从浏览器访问不到"></a>将静态页面加入到static文件夹从浏览器访问不到</h1><p>静态html加入到static文件夹后，从localhost:8080:&#x2F;content.html访问不到，<br>解决办法:重新编译staic模块<br><img src="/../images/ebb7f482ba7d48de9272af751ecb5038.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<h1 id="The-field-image-exceeds-its-maximum-permitted-size-of-1048576-bytes"><a href="#The-field-image-exceeds-its-maximum-permitted-size-of-1048576-bytes" class="headerlink" title="The field image exceeds its maximum permitted size of 1048576 bytes."></a>The field image exceeds its maximum permitted size of 1048576 bytes.</h1><p>原因:上传的文件太大了<br>解决办法:调整最大限制<br>在application.property中输入下面的,即可</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-none"><code class="language-none"># 上传的最大文件大小必须小于100MB
+spring.servlet.multipart.max-file-size&#x3D;100MB
+# 上传多个文件的时候，单个文件大小不得超过20MB
+spring.servlet.multipart.max-request-size&#x3D;20MB
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+
+<h1 id="io-jsonwebtoken-UnsupportedJwtException-Signed-Claims-JWSs-are-not-supported"><a href="#io-jsonwebtoken-UnsupportedJwtException-Signed-Claims-JWSs-are-not-supported" class="headerlink" title="io.jsonwebtoken.UnsupportedJwtException: Signed Claims JWSs are not supported."></a>io.jsonwebtoken.UnsupportedJwtException: Signed Claims JWSs are not supported.</h1><p>将Jwts.parser().parseClaimsJwt(str)改成Jwts.parser().parseClaimsJws(str)即可</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">Claims</span> free <span class="token operator">=</span> <span class="token class-name">Jwts</span><span class="token punctuation">.</span><span class="token function">parser</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>
+        <span class="token function">setSigningKey</span><span class="token punctuation">(</span><span class="token string">"free"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token comment">//设置密钥</span>
+        <span class="token function">parseClaimsJws</span><span class="token punctuation">(</span>str<span class="token punctuation">)</span><span class="token punctuation">.</span>
+        <span class="token function">getBody</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>free<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+
+<h1 id="java-time-format-DateTimeParseException-Text-‘2023-5-11-11-12-13’-could-not-be-parsed-at-index-5"><a href="#java-time-format-DateTimeParseException-Text-‘2023-5-11-11-12-13’-could-not-be-parsed-at-index-5" class="headerlink" title="java.time.format.DateTimeParseException: Text ‘2023-5-11 11:12:13’ could not be parsed at index 5"></a>java.time.format.DateTimeParseException: Text ‘2023-5-11 11:12:13’ could not be parsed at index 5</h1><p>@DateTimeFormat(pattern&#x3D;”@DateTimeFormat(pattern &#x3D;”yyyy-MM-dd HH:mm:ss””)中的MM是两个<br>但是字符串中的月份是一位，解决办法把2023-5-11改成2023-05-11即可，这个纯属是粗心大意了</p>
+<h1 id="IDEA创建Maven项目后没有src目录"><a href="#IDEA创建Maven项目后没有src目录" class="headerlink" title="IDEA创建Maven项目后没有src目录"></a>IDEA创建Maven项目后没有src目录</h1><p>IDEA版本号:2022.2.5<br>解决办法:File-&gt;Settings,搜索Runner这个选项,在VM Options中加入-Darchetype&#x3D;Internal，apply-&gt;OK,<br>出现原因暂时不知道</p>
+<h1 id="Unknown-database-xxx"><a href="#Unknown-database-xxx" class="headerlink" title="Unknown database xxx"></a>Unknown database xxx</h1><p>排错思路:</p>
+<ol>
+<li>数据库是否建好了?</li>
+<li>数据库名称是否写对了</li>
+<li>配置文件中账户与密码驱动是否写对了</li>
+<li>mysql服务是否开启了</li>
+<li>端口号是否被占用了<br>对应的措施<br>是否有数据库和数据库名称这个可以自己检查出来，这里主要是记录后面几种的做法<br>若是yml格式的，你的password可能需要加个引号<br><img src="/../images/4edbaa41b97c4140a2b68831000b1a1f.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>驱动的话将版本改为最新版本试试</li>
+</ol>
+<figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">&lt;dependency<span class="token punctuation">></span>
+  &lt;groupId<span class="token punctuation">></span>mysql&lt;/groupId<span class="token punctuation">></span>
+  &lt;artifactId<span class="token punctuation">></span>mysql<span class="token punctuation">-</span>connector<span class="token punctuation">-</span>java&lt;/artifactId<span class="token punctuation">></span>
+  &lt;version<span class="token punctuation">></span>8.0.33&lt;/version<span class="token punctuation">></span>
+&lt;/dependency<span class="token punctuation">></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p>查看mysql服务是否开启<br>以管理员的身份运行cmd<br><img src="/../images/02045ccacf9c4c08a4937fa360186d4f.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>输入 net start mysql,输入后是这个样子<br><img src="/../images/792a88ffe4ae48688e6abfd8ebc8f861.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>最后检查端口号是否被占用，还是在cmd中输入netstart -ano<br><img src="/../images/481eaf6ad0194cd0a3a817030c8b620d.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>找你在配置文件中设置的端口号，如何查看?<br>windows下默认是在C:&#x2F;ProgramData&#x2F;MySQL&#x2F;MySQL Server X.X&#x2F;my.ini或C:&#x2F;Program Files (x86)&#x2F;MySQL&#x2F;MySQL Server X.X&#x2F;my.ini。其中X.X代表MySQL版本号。在Linux系统下，MySQL配置文件通常位于&#x2F;etc&#x2F;my.cnf或&#x2F;etc&#x2F;mysql&#x2F;my.cnf<br><img src="/../images/c2efdfa7a54a4db98016f89b2167de2b.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>找到占用的程序，在任务管理器中结束掉，win+R输入services.msc找到mysql服务，重启试试。这是我能想到的所有解决办法</p>
+<h1 id="SpringBoot测试失败并报错-Unable-to-find-a-SpringBootConfiguration-you-need-to-use-ContextConfiguration"><a href="#SpringBoot测试失败并报错-Unable-to-find-a-SpringBootConfiguration-you-need-to-use-ContextConfiguration" class="headerlink" title="SpringBoot测试失败并报错: Unable to find a @SpringBootConfiguration, you need to use @ContextConfiguration"></a>SpringBoot测试失败并报错: Unable to find a @SpringBootConfiguration, you need to use @ContextConfiguration</h1><p>一般是测试类所在的包名和启动类的包名不一致造成的<br><img src="/../images/f2f1a7127c3c48b4bf728dfe017e2345.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java/" class="print-no-link">#Java</a>
+      
+        <a href="/tags/Spring/" class="print-no-link">#Spring</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>SpringWeb踩坑记录</div>
+      <div>http://example.com/post/SpringWeb踩坑记录.html</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>矽疑</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/post/Acwing-867-%E7%BA%BF%E6%80%A7%E5%90%8C%E4%BD%99%E6%96%B9%E7%A8%8B.html" title="Acwing 867 线性同余方程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Acwing 867 线性同余方程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/post/Ubuntu22-04%E6%90%AD%E5%BB%BAmysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.html" title="Ubuntu22.04搭建mysql主从复制">
+                        <span class="hidden-mobile">Ubuntu22.04搭建mysql主从复制</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

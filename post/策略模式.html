@@ -1,1 +1,884 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><script type="module" crossorigin src="/static/js/38b034bd.js"></script><link rel="stylesheet" href="/static/css/581e01a0.css"><!-- hexo injector head_end start --><script rel="prefetch" async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script rel="preload" src="https://unpkg.com/blueimp-md5@^2.19.0/js/md5.min.js"></script><script rel="preload" src="https://unpkg.com/lodash@^4.17.21/lodash.min.js"></script><link rel="stylesheet" href="https://fonts.loli.net/css?family=Rubik" /><script rel="preload" src="https://unpkg.com/gitalk@^1.8.0/dist/gitalk.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk@^1.8.0/dist/gitalk.css"/><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body id="body-container"><noscript><strong>We're sorry but this app doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="矽疑">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="是记录看《大话设计模式》这本书的感受  还是从一个想法开始入手，书中的是让我们写一个商场收银系统，由于我java没有学GUI的那部分，我就直接将效果图贴过来了不难写出下面的伪代码 1.0总计&#x3D;0; 计算总费用()&#123;    单次费用&#x3D;单价*数量     总计累加单次费用     将此次商品加入显示结果集合中，格式:单价:xxxx 数量: xxxx 合计:xxxx     在界面上显示总计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="策略模式">
+<meta property="og:url" content="http://example.com/post/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F.html">
+<meta property="og:site_name" content="矽疑">
+<meta property="og:description" content="是记录看《大话设计模式》这本书的感受  还是从一个想法开始入手，书中的是让我们写一个商场收银系统，由于我java没有学GUI的那部分，我就直接将效果图贴过来了不难写出下面的伪代码 1.0总计&#x3D;0; 计算总费用()&#123;    单次费用&#x3D;单价*数量     总计累加单次费用     将此次商品加入显示结果集合中，格式:单价:xxxx 数量: xxxx 合计:xxxx     在界面上显示总计">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/%E5%95%86%E5%9C%BA%E6%94%B6%E9%93%B6%E7%B3%BB%E7%BB%9F%E6%95%88%E6%9E%9C%E5%9B%BE.jpg">
+<meta property="og:image" content="http://example.com/images/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/FactoryAttempt.jpg">
+<meta property="og:image" content="http://example.com/images/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/StrategyPattern.jpg">
+<meta property="article:published_time" content="2024-09-23T14:56:19.000Z">
+<meta property="article:modified_time" content="2024-09-23T14:56:43.378Z">
+<meta property="article:author" content="矽疑">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/images/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/%E5%95%86%E5%9C%BA%E6%94%B6%E9%93%B6%E7%B3%BB%E7%BB%9F%E6%95%88%E6%9E%9C%E5%9B%BE.jpg">
+  
+  
+  
+  <title>策略模式 - 矽疑</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="策略模式"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-09-23 22:56" pubdate>
+          2024年9月23日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          34 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">策略模式</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>是记录看《大话设计模式》这本书的感受</p>
+</blockquote>
+<p>还是从一个想法开始入手，书中的是让我们写一个商场收银系统，由于我java没有学GUI的那部分，我就直接将效果图贴过来了<br><img src="/../images/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/%E5%95%86%E5%9C%BA%E6%94%B6%E9%93%B6%E7%B3%BB%E7%BB%9F%E6%95%88%E6%9E%9C%E5%9B%BE.jpg" srcset="/img/loading.gif" lazyload alt="商场收银系统效果图"><br>不难写出下面的伪代码</p>
+<h1 id="1-0"><a href="#1-0" class="headerlink" title="1.0"></a>1.0</h1><figure><div class="code-wrapper"><pre class="line-numbers language-java" data-language="java"><code class="language-java">总计<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>
+计算总费用<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+   单次费用<span class="token operator">=</span>单价<span class="token operator">*</span>数量
+    总计累加单次费用
+    将此次商品加入显示结果集合中，格式<span class="token operator">:</span>单价<span class="token operator">:</span>xxxx 数量<span class="token operator">:</span> xxxx 合计<span class="token operator">:</span>xxxx
+    在界面上显示总计费用
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<h1 id="1-1-增加打折"><a href="#1-1-增加打折" class="headerlink" title="1.1 增加打折"></a>1.1 增加打折</h1><p>改,将打折直接加入到下拉列表中，根据当前下拉列表选中的项来计算总费用,伪代码如下</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-java" data-language="java"><code class="language-java">页面初始化方法<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    将折扣力度加入到下拉列表中
+    折扣力度分别是正常收费，<span class="token number">7</span>折，<span class="token number">6</span>折，索引依次是<span class="token number">0</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span>
+<span class="token punctuation">&#125;</span>
+总计<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>
+计算总费用<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    单次费用 <span class="token operator">=</span> 单价<span class="token operator">*</span>数量
+    对当前下拉列表中选中的项做判断，根据索引对单次费用进行操作
+    下面的代码和<span class="token number">1.0</span>版本一致
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p>但是忽略了一个问题，是在商场使用，而商场的活动有一个特点：持续时间短，改变大。若是以上面的方式实现的话，如果商场搞出了一个满多少返多少或满多少积分减多少的活动呢？<br>商场常见的活动如下:</p>
+<ol>
+<li>满xxx返xxx</li>
+<li>打xxx折</li>
+</ol>
+<p>这样的话关于打折的只用写一个类即可,初始化时传入打几折即可<br>书中的原文让我茅塞顿开</p>
+<blockquote>
+<p><b>面向对象的编程,并不是类越多越好,类的划分是为了封装，但分类的基础是抽象,具有相同属性和功能的对象的抽象集合才是类<b></p>
+</blockquote>
+<p>所有的活动抽象成CashSuper,满xx返xx,打xx折全部继承自CashSuper<br><img src="/../images/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/FactoryAttempt.jpg" srcset="/img/loading.gif" lazyload></p>
+<h1 id="融入简单工厂"><a href="#融入简单工厂" class="headerlink" title="融入简单工厂"></a>融入简单工厂</h1><figure><div class="code-wrapper"><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">test</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Arrays</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Scanner</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Write</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">Scanner</span> s <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Scanner</span><span class="token punctuation">(</span><span class="token class-name">System</span><span class="token punctuation">.</span>in<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"请输入总计费用:"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">double</span> fees <span class="token operator">=</span> s<span class="token punctuation">.</span><span class="token function">nextDouble</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"当前活动 0:正常收费 1:7折 2:6折 3:满300减100\n请输入你选择的活动编号"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> idx <span class="token operator">=</span> s<span class="token punctuation">.</span><span class="token function">nextInt</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">CashSuper</span> cs <span class="token operator">=</span> <span class="token class-name">CashFactory</span><span class="token punctuation">.</span><span class="token function">createCashSuper</span><span class="token punctuation">(</span>fees<span class="token punctuation">,</span>idx<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"总费用是:"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>cs<span class="token punctuation">.</span><span class="token function">acceptMoney</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">class</span> <span class="token class-name">CashFactory</span><span class="token punctuation">&#123;</span>
+    <span class="token comment">//idx是选择的活动</span>
+    <span class="token comment">//0:正常收费 1:7折 2:6折 3:满300减100</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">CashContext</span> <span class="token function">createCashSuper</span><span class="token punctuation">(</span><span class="token keyword">double</span> money<span class="token punctuation">,</span><span class="token keyword">int</span> idx<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name">CashContext</span> cc <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token keyword">switch</span> <span class="token punctuation">(</span>idx<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+            <span class="token keyword">case</span> <span class="token number">0</span><span class="token operator">:</span>
+                cs <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CashContext</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">CashNormal</span><span class="token punctuation">(</span>money<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token keyword">case</span> <span class="token number">1</span><span class="token operator">:</span>
+            <span class="token keyword">case</span> <span class="token number">2</span><span class="token operator">:</span>
+                <span class="token comment">//这里最好分开写</span>
+                cs <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CashContext</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">CashDiscount</span><span class="token punctuation">(</span>money<span class="token punctuation">,</span>idx<span class="token operator">==</span><span class="token number">1</span><span class="token operator">?</span><span class="token number">0.7</span><span class="token operator">:</span><span class="token number">0.6</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token keyword">case</span> <span class="token number">3</span><span class="token operator">:</span>
+                cs <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CashContext</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">CashReturn</span><span class="token punctuation">(</span>money<span class="token punctuation">,</span><span class="token number">300</span><span class="token punctuation">,</span><span class="token number">100</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+        <span class="token keyword">return</span> cs<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">abstract</span> <span class="token keyword">class</span> <span class="token class-name">CashSuper</span><span class="token punctuation">&#123;</span>
+    <span class="token keyword">protected</span> <span class="token keyword">double</span> money<span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token class-name">CashSuper</span><span class="token punctuation">(</span><span class="token keyword">double</span> money<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>money <span class="token operator">=</span> money<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">public</span> <span class="token keyword">abstract</span> <span class="token keyword">double</span> <span class="token function">acceptMoney</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">class</span> <span class="token class-name">CashDiscount</span> <span class="token keyword">extends</span> <span class="token class-name">CashSuper</span><span class="token punctuation">&#123;</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">double</span> discount<span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token class-name">CashDiscount</span><span class="token punctuation">(</span><span class="token keyword">double</span> money<span class="token punctuation">,</span><span class="token keyword">double</span> discount<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">super</span><span class="token punctuation">(</span>money<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>discount<span class="token operator">=</span>discount<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">double</span> <span class="token function">acceptMoney</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token comment">//不打折discount就是1,把这个不打折的抽象成一个类，让每个类的职责单一化</span>
+        <span class="token keyword">return</span> money<span class="token operator">*</span>discount<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">class</span> <span class="token class-name">CashNormal</span> <span class="token keyword">extends</span>  <span class="token class-name">CashSuper</span><span class="token punctuation">&#123;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">CashNormal</span><span class="token punctuation">(</span><span class="token keyword">double</span> money<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">super</span><span class="token punctuation">(</span>money<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">double</span> <span class="token function">acceptMoney</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> money<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">class</span> <span class="token class-name">CashReturn</span> <span class="token keyword">extends</span> <span class="token class-name">CashSuper</span><span class="token punctuation">&#123;</span>
+    <span class="token keyword">private</span> <span class="token keyword">double</span> condition<span class="token punctuation">;</span><span class="token comment">//条件</span>
+    <span class="token keyword">private</span> <span class="token keyword">double</span> returnMoney<span class="token punctuation">;</span><span class="token comment">//返利</span>
+    <span class="token keyword">public</span> <span class="token class-name">CashReturn</span><span class="token punctuation">(</span><span class="token keyword">double</span> money<span class="token punctuation">,</span><span class="token keyword">double</span> condition<span class="token punctuation">,</span><span class="token keyword">double</span> returnMoney<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token keyword">super</span><span class="token punctuation">(</span>money<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>condition <span class="token operator">=</span> condition<span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>returnMoney <span class="token operator">=</span> returnMoney<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">double</span> <span class="token function">acceptMoney</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>money <span class="token operator">-</span> <span class="token class-name">Math</span><span class="token punctuation">.</span><span class="token function">floor</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>money<span class="token operator">/</span><span class="token keyword">this</span><span class="token punctuation">.</span>condition<span class="token punctuation">)</span><span class="token operator">*</span><span class="token keyword">this</span><span class="token punctuation">.</span>returnMoney<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p>不足之处:</p>
+<ul>
+<li>数据校验没写</li>
+<li>如果要增加打5折和打9折的活动，这里有一个想法，根据字符串判断是那种活动，若是打折活动，将折扣截取出来，这样就不用写重复的代码了</li>
+<li>如果要增加满多少积分换取奖品呢</li>
+<li>如果商场要把满300减100改成满300减50呢？又要改代码，麻烦</li>
+</ul>
+<p>接下来上策略模式</p>
+<h1 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h1><blockquote>
+<p>定义: 策略模式(Strategy),它定义了算法家族，分别封装起来，让它们之间可以互相替换，此模式让算法的变化，不会影响到使用算法的客户<br>就这个例子而言，算法就是每一种活动的对钱的操作</p>
+</blockquote>
+<h2 id="整体结构图"><a href="#整体结构图" class="headerlink" title="整体结构图"></a>整体结构图</h2><p><img src="/../images/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/StrategyPattern.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>简易策略模式</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">class</span> <span class="token class-name">Context</span><span class="token punctuation">&#123;</span>
+    <span class="token class-name">Strategy</span> s <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token class-name">Context</span><span class="token punctuation">(</span><span class="token class-name">Strategy</span> s<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>s <span class="token operator">=</span> s<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">ContextMethod</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token class-name"><span class="token namespace">s<span class="token punctuation">.</span></span>AlgorithmMethod</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">abstract</span> <span class="token keyword">class</span> <span class="token class-name">Strategy</span><span class="token punctuation">&#123;</span>
+    <span class="token comment">//抽象算法方法</span>
+    <span class="token keyword">public</span> <span class="token keyword">abstract</span> <span class="token keyword">void</span> <span class="token class-name">AlgorithmMethod</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">class</span> <span class="token class-name">ConcreteA</span> <span class="token keyword">extends</span> <span class="token class-name">Strategy</span><span class="token punctuation">&#123;</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">AlgorithmMethod</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"算法A实现"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">class</span> <span class="token class-name">ConcreteB</span> <span class="token keyword">extends</span> <span class="token class-name">Strategy</span><span class="token punctuation">&#123;</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">AlgorithmMethod</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"算法B实现"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p>基于策略模式对基于简单工厂的进行改造，加一个CashContext类，改写客户端的方法，Strategy对应到这个例子就是基于简单工厂的CashSuper类。<br>CashContext类</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">class</span> <span class="token class-name">CashContext</span><span class="token punctuation">&#123;</span>
+    <span class="token class-name">CashSuper</span> cs<span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token class-name">CashContext</span><span class="token punctuation">(</span><span class="token keyword">int</span> idx<span class="token punctuation">,</span><span class="token keyword">double</span> money<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+       <span class="token keyword">switch</span> <span class="token punctuation">(</span>idx<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+            <span class="token keyword">case</span> <span class="token number">0</span><span class="token operator">:</span>
+                cs <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CashContext</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">CashNormal</span><span class="token punctuation">(</span>money<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token keyword">case</span> <span class="token number">1</span><span class="token operator">:</span>
+            <span class="token keyword">case</span> <span class="token number">2</span><span class="token operator">:</span>
+                <span class="token comment">//这里最好分开写</span>
+                cs <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CashContext</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">CashDiscount</span><span class="token punctuation">(</span>money<span class="token punctuation">,</span>idx<span class="token operator">==</span><span class="token number">1</span><span class="token operator">?</span><span class="token number">0.7</span><span class="token operator">:</span><span class="token number">0.6</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token keyword">case</span> <span class="token number">3</span><span class="token operator">:</span>
+                cs <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CashContext</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">CashReturn</span><span class="token punctuation">(</span>money<span class="token punctuation">,</span><span class="token number">300</span><span class="token punctuation">,</span><span class="token number">100</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token class-name">ContextMethod</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        cs<span class="token punctuation">.</span><span class="token function">acceptMoney</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p>客户端</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">CashContext</span> cc <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CashContext</span><span class="token punctuation">(</span>idx<span class="token punctuation">,</span>fees<span class="token punctuation">)</span>
+<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>cc<span class="token punctuation">.</span><span class="token function">acceptMoney</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></div></figure>
+<p>搞定</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ol>
+<li>策略模式可以以相同的方式调用所有的算法，降低了各种算法类之间的耦合。能理解前面半句话从客户端的<code>cc.acceptMoney()</code>可以看出来，都是调用一个acceptMoney，降低各种算法之间的耦合有点感触，可能是算法之间没有彼此依赖，这样改变一个算法其他的算法不受影响</li>
+<li>策略模式的Strategy类层次为Context定义了一系列的可供重用的算法或行为。继承有助于析取出这些算法中的公共功能。就这个例子而言这里的公共功能就是计算钱的功能，如果把属性算上的话，那么抽象类CashSuper的money属性也算一个。</li>
+<li>策略模式简化了单元测试。这个理解不了，单元测试用过，但是没什么感触</li>
+<li>针对于if语句中堆砌了大量的操作的情况，把这些大量的操作封装成一个个Strategy类，这样利用策略模式的特点之一：以相同的方式调用所有的算法，这样可以消除语句</li>
+</ol>
+<h2 id="面向对象的理解"><a href="#面向对象的理解" class="headerlink" title="面向对象的理解"></a>面向对象的理解</h2><blockquote>
+<p>类的划分是为了封装，但划分的前提是抽象,具有相同属性和功能的对象的抽象集合才是类<b><br>继承，将共同属性和行为丢到父类中，这样减少代码冗余</p>
+</blockquote>
+<p>搞定</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="print-no-link">#设计模式</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>策略模式</div>
+      <div>http://example.com/post/策略模式.html</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>矽疑</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年9月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/post/%E6%B1%82%E7%BA%A6%E6%95%B0.html" title="求约数">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">求约数</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/post/%E7%AD%9B%E8%B4%A8%E6%95%B0.html" title="筛质数">
+                        <span class="hidden-mobile">筛质数</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
